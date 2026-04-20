@@ -1,0 +1,153 @@
+- id: LNX-001
+  name: Check /etc/passwd exists
+  module: linux
+  type: exists
+  target_type: file
+  target: /etc/passwd
+  profiles: [basic, strict]
+  severity: high
+  recommendation: Ensure /etc/passwd exists and is readable by system processes.
+
+- id: LNX-002
+  name: Check /etc/shadow permission is restricted
+  module: linux
+  type: config_equals
+  key: shadow_restricted
+  expected: true
+  profiles: [basic, strict]
+  severity: high
+  recommendation: Tighten /etc/shadow permissions to prevent broad read/write access.
+
+- id: LNX-003
+  name: Check UID 0 account exists
+  module: linux
+  type: config_equals
+  key: root_uid_exists
+  expected: true
+  profiles: [basic, strict]
+  severity: high
+  recommendation: Ensure a controlled UID 0 account exists.
+
+- id: LNX-004
+  name: Check listening ports do not include Telnet 23
+  module: linux
+  type: config_equals
+  key: has_telnet_port
+  expected: false
+  profiles: [basic, strict]
+  severity: medium
+  recommendation: Disable insecure Telnet service if port 23 is open.
+
+- id: LNX-005
+  name: Check firewall status is active
+  module: linux
+  type: config_equals
+  key: firewall_status
+  expected: active
+  profiles: [basic, strict]
+  severity: medium
+  recommendation: Enable and configure host firewall rules.
+
+- id: LNX-006
+  name: Check /etc/sudoers exists
+  module: linux
+  type: exists
+  target_type: file
+  target: /etc/sudoers
+  profiles: [strict]
+  severity: high
+  recommendation: Ensure sudoers policy file exists and is managed.
+
+- id: LNX-007
+  name: Check /etc/passwd is not world writable
+  module: linux
+  type: config_equals
+  key: passwd_world_writable
+  expected: false
+  profiles: [strict]
+  severity: high
+  recommendation: Remove world-write permission from /etc/passwd.
+
+- id: LNX-008
+  name: Check UID 0 account count is no more than 1
+  module: linux
+  type: numeric_compare
+  key: uid0_account_count
+  operator: le
+  expected: 1
+  profiles: [strict]
+  severity: medium
+  recommendation: Keep UID 0 accounts to minimum and review custom root-equivalent users.
+
+- id: LNX-009
+  name: Check ASLR is enabled
+  module: linux
+  type: numeric_compare
+  key: kernel_aslr
+  operator: ge
+  expected: 1
+  profiles: [strict]
+  severity: high
+  recommendation: Set kernel.randomize_va_space to 1 or 2.
+
+- id: LNX-010
+  name: Check IPv4 forwarding is disabled
+  module: linux
+  type: numeric_compare
+  key: kernel_ip_forward
+  operator: eq
+  expected: 0
+  profiles: [strict]
+  severity: medium
+  recommendation: Disable net.ipv4.ip_forward unless the host is a router.
+
+- id: LNX-011
+  name: Check os_id format is valid
+  module: linux
+  type: regex_match
+  key: os_id
+  expected: "^[a-z0-9._-]+$"
+  profiles: [strict]
+  severity: low
+  recommendation: Ensure /etc/os-release has valid ID field.
+
+- id: LNX-012
+  name: Check os_id is in known Linux family list
+  module: linux
+  type: value_in
+  key: os_id
+  expected: ["kali", "ubuntu", "debian", "centos", "rhel", "fedora", "rocky", "almalinux", "arch"]
+  profiles: [strict]
+  severity: low
+  recommendation: Verify distribution identity if os_id is unusual.
+
+- id: LNX-013
+  name: Check listening port count is controlled
+  module: linux
+  type: numeric_compare
+  key: listening_port_count
+  operator: le
+  expected: 50
+  profiles: [strict]
+  severity: low
+  recommendation: Review and reduce unnecessary listening services.
+
+- id: LNX-014
+  name: Check command ss exists
+  module: linux
+  type: exists
+  target_type: command
+  target: ss
+  profiles: [strict]
+  severity: low
+  recommendation: Install iproute2 package to provide ss command.
+
+- id: LNX-015
+  name: Check Telnet port flag is not true
+  module: linux
+  type: value_not_in
+  key: has_telnet_port
+  expected: [true]
+  profiles: [strict]
+  severity: medium
+  recommendation: Ensure Telnet service is disabled and port 23 is closed.
