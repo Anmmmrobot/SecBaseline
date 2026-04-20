@@ -1,0 +1,62 @@
+- id: SSH-001
+  name: Check sshd_config exists
+  module: ssh
+  type: exists
+  target_type: file
+  target: /etc/ssh/sshd_config
+  profiles: [basic, strict]
+  severity: high
+  recommendation: Install and configure OpenSSH server.
+
+- id: SSH-002
+  name: Disable root login
+  module: ssh
+  type: value_not_in
+  key: PermitRootLogin
+  expected: ["yes"]
+  profiles: [basic, strict]
+  severity: high
+  recommendation: Set PermitRootLogin no.
+
+- id: SSH-003
+  name: Disable password authentication
+  module: ssh
+  type: value_not_in
+  key: PasswordAuthentication
+  expected: ["yes"]
+  profiles: [basic, strict]
+  severity: high
+  recommendation: Set PasswordAuthentication no and use key-based auth.
+
+- id: SSH-004
+  name: Change default SSH port
+  module: ssh
+  type: numeric_compare
+  key: Port
+  operator: ne
+  expected: 22
+  profiles: [basic, strict]
+  severity: low
+  recommendation: Optionally change Port to reduce scan noise.
+
+- id: SSH-005
+  name: Set ClientAliveInterval
+  module: ssh
+  type: numeric_compare
+  key: ClientAliveInterval
+  operator: ge
+  expected: 1
+  profiles: [basic, strict]
+  severity: medium
+  recommendation: Configure ClientAliveInterval for idle session control.
+
+- id: SSH-006
+  name: Limit MaxAuthTries
+  module: ssh
+  type: numeric_compare
+  key: MaxAuthTries
+  operator: le
+  expected: 6
+  profiles: [strict]
+  severity: medium
+  recommendation: Set MaxAuthTries to 6 or less.
